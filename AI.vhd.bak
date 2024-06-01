@@ -1,0 +1,96 @@
+library ieee;
+ 
+use ieee.std_logic_1164.all;
+ 
+use ieee.numeric_std.all;
+ 
+ 
+ 
+ 
+entity AI is
+ 
+    port(
+ 
+        clk : in std_logic;
+ 
+        en  : in std_logic;
+ 
+        rst : in std_logic;
+ 
+        n_r_l : in std_logic := '0';
+ 
+        pbx : in std_logic_vector(7 downto 0);
+ 
+        pby : in std_logic_vector(7 downto 0);
+ 
+        racket : in std_logic_vector(7 downto 0);
+ 
+        L : out std_logic;
+ 
+        R : out std_logic
+ 
+    );
+ 
+end entity;
+ 
+ 
+ 
+ 
+architecture a_AI of AI is
+ 
+    signal ball_field : std_logic_vector(2 downto 0);
+ 
+    signal RL, RR : std_logic;
+ 
+    signal ball_hit : std_logic;
+ 
+    signal ball_in_field : std_logic;
+ 
+    signal UnRacket : unsigned(7 downto 0);
+ 
+    signal UnBall : unsigned(7 downto 0);
+ 
+    signal move, to_left, to_right : std_logic;
+ 
+begin
+ 
+    ball_field <= pbx(2 downto 0) when n_r_l='0' else pbx(7 downto 5);
+ 
+     
+ 
+    ball_hit <= '1' when (pby and racket)/="00000000" else '0';
+ 
+     
+ 
+    ball_in_field <= '1' when ball_field /= "000" else '0';
+ 
+     
+ 
+    UnRacket <= unsigned(racket);
+ 
+    UnBall <= unsigned(pby);
+ 
+     
+ 
+    to_left  <= '1' when (UnBall < UnRacket) else '0';
+ 
+    to_right <= '1' when (UnBall > UnRacket) else '0';
+ 
+     
+ 
+    move <= ball_in_field and (not ball_hit);
+ 
+    RR <= move and to_left;
+ 
+    RL <= move and to_right;
+ 
+     
+ 
+    L <= RL;
+ 
+    R <= RR;
+ 
+ 
+ 
+ 
+end architecture;
